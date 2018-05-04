@@ -7,6 +7,10 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
+          script {
+            println '============================'
+            println env.JERVIS_DOMAIN
+          }
           checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false,
           extensions: [[$class: 'LocalBranch', localBranch: '**']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-user-and-token', url: 'https://github.com/soundarapandian/ex-java-jervis-build.git']]])
       }
@@ -17,6 +21,7 @@ pipeline {
             def raw_yaml = (new File('.jervis.yml')).text
             def yaml = new Yaml()
             def jervis_yaml = yaml.load(raw_yaml)
+            println '============================'
             println jervis_yaml['language']
             println jervis_yaml.dump()
           }
