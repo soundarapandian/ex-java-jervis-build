@@ -1,0 +1,26 @@
+@Grab(group='org.yaml', module='snakeyaml', version='1.19', transitive=false)
+
+import org.yaml.snakeyaml.Yaml
+
+pipeline {
+  agent { label 'language:java'}
+  stages {
+    stage('Checkout') {
+      steps {
+          checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false,
+          extensions: [[$class: 'LocalBranch', localBranch: '**']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-user-and-token', url: 'https://github.com/trilogy-group/jervis-aline-poc.git']]])
+      }
+    }
+    stage('Trigger aLine') {
+        steps {
+          script {
+            def raw_yaml = (new File('.jervis.yml')).text
+            def yaml = new Yaml()
+            def jervis_yaml = yaml.load(raw_yaml)
+            println jervis_yaml['language']
+            println jervis_yaml.dump()
+          }
+        }
+    }
+  }
+}
