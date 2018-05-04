@@ -10,7 +10,6 @@ pipeline {
           script {
             println '============================'
             println env.BRANCH_NAME
-            println env.CHANGE_BRANCH
           }
           checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false,
           extensions: [[$class: 'LocalBranch', localBranch: '**']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-user-and-token', url: 'https://github.com/soundarapandian/ex-java-jervis-build.git']]])
@@ -19,7 +18,9 @@ pipeline {
     stage('Trigger aLine') {
         steps {
           script {
-            def raw_yaml = (new File('../.jervis.yml')).text
+            sh 'ls -a'
+            println env.WORKSPACE
+            def raw_yaml = (new File("${env.WORKSPACE}/.jervis.yml")).text
             def yaml = new Yaml()
             def jervis_yaml = yaml.load(raw_yaml)
             println '============================'
