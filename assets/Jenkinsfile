@@ -18,7 +18,7 @@ pipeline {
     stage('Trigger aLine') {
         steps {
           script {
-            def raw_yaml = (new File('.jervis.yml')).text
+            def raw_yaml = (new File('../.jervis.yml')).text
             def yaml = new Yaml()
             def jervis_yaml = yaml.load(raw_yaml)
             println '============================'
