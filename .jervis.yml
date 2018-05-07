@@ -10,3 +10,7 @@ before_install:
 script: gradle check
 jenkins:
   pipeline_jenkinsfile: assets/SaaS
+aline:
+  portfolio: 'TestPFAurea'
+  product: 'ex-java-jervis-build'
+  product_version: '1.0'

@@ -2,7 +2,7 @@
 @Library('Jervis Global Library')
 
 import net.gleske.jervis.remotes.GitHub
-
+import org.yaml.snakeyaml.Yaml
 
 /**
   Gets GitHub API token from the global credential store.
@@ -62,24 +62,30 @@ pipeline {
     stage('Trigger aLine') {
         steps {
           script {
-            // sh 'ls -a'
-            // println env.WORKSPACE
-            // def raw_yaml = (new File(".jervis.yml")).text
-            // def yaml = new Yaml()
-            // def jervis_yaml = yaml.load(raw_yaml)
-
             // sh "ls -a ${env.WORKSPACE}"
             // def build_gradle = readFile("${env.WORKSPACE}/build.gradle")
             // def raw_yaml = readFile("${env.WORKSPACE}/.jervis.yml")
             // def yaml = new Yaml()
             // def jervis_yaml = yaml.load(raw_yaml)
 
-            // println '============================'
-            // println jervis_yaml['language']
-            // println jervis_yaml.dump()
-
             List jervis_metadata = getJervisMetaData("soundarapandian/ex-java-jervis-build".toString(), env.BRANCH_NAME)
-            println jervis_metadata[0]
+            def yaml = new Yaml()
+            def jervis_yaml = yaml.load(jervis_metadata[0])
+
+            println '============================'
+            println jervis_yaml['language']
+            println jervis_yaml.dump()
+            println '============================'
+
+            // devfactory (
+            //     portfolio: 'TestPFAurea',
+            //     product: 'jervis-aline-poc',
+            //     productVersion: "0.1",
+            //     types: jervis_yaml['language'],
+            //     processTests: true
+            // ) {
+            //     sh "${jervis_yaml['script']}"
+            // }
           }
         }
     }
