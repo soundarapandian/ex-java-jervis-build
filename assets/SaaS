@@ -1,5 +1,50 @@
 @Grab(group='org.yaml', module='snakeyaml', version='1.19', transitive=false)
-@Library('Jervis Global Library') _
+@Library('Jervis Global Library')
+
+import net.gleske.jervis.remotes.GitHub
+
+
+/**
+  Gets GitHub API token from the global credential store.
+ */
+
+@NonCPS
+String getGitHubAPIToken() {
+    Jenkins.instance.getExtensionList("com.cloudbees.plugins.credentials.SystemCredentialsProvider")[0].getCredentials().find {
+        it.class.simpleName == 'StringCredentialsImpl' && it.id == 'github-token'
+    }.with {
+        if(it) {
+            it.secret
+        }
+    } as String
+}
+
+
+/**
+  Reads GitHub API and returns the .jervis.yml file via API instead of a
+  workspace checkout.
+
+  @return A list where the first item is jervis_yaml and the second item is a
+          list of files in the root of the repository.
+ */
+@NonCPS
+List getJervisMetaData(String project, String JERVIS_BRANCH) {
+    String jervis_yaml
+    def git_service = new GitHub()
+    git_service.gh_token = getGitHubAPIToken()
+    def folder_listing = git_service.getFolderListing(project, '/', JERVIS_BRANCH)
+    if('.jervis.yml' in folder_listing) {
+        jervis_yaml = git_service.getFile(project, '.jervis.yml', JERVIS_BRANCH)
+    }
+    else if('.travis.yml' in folder_listing) {
+        jervis_yaml = git_service.getFile(project, '.travis.yml', JERVIS_BRANCH)
+    }
+    else {
+        throw new FileNotFoundException('Cannot find .jervis.yml nor .travis.yml')
+    }
+    [jervis_yaml, folder_listing]
+}
+
 
 pipeline {
   agent { label 'language:java'}

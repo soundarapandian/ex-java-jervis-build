@@ -9,4 +9,4 @@ before_install:
   - export PATH=$PATH:/home/jenkins/.sdkman/candidates/gradle/current/bin
 script: gradle check
 jenkins:
-  pipeline_jenkinsfile: assets/Jenkinsfile
+  pipeline_jenkinsfile: assets/SaaS
