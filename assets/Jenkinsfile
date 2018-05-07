@@ -1,31 +1,40 @@
 @Grab(group='org.yaml', module='snakeyaml', version='1.19', transitive=false)
-
-import org.yaml.snakeyaml.Yaml
+@Library('Jervis Global Library') _
 
 pipeline {
   agent { label 'language:java'}
   stages {
-    stage('Checkout') {
-      steps {
-          script {
-            println '============================'
-            println env.BRANCH_NAME
-          }
-          checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false,
-          extensions: [[$class: 'LocalBranch', localBranch: '**']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-user-and-token', url: 'https://github.com/soundarapandian/ex-java-jervis-build.git']]])
-      }
-    }
+    // stage('Checkout') {
+    //   steps {
+    //       script {
+    //         println '============================'
+    //         println env.BRANCH_NAME
+    //       }
+    //       checkout([$class: 'GitSCM', branches: [[name: '**']], doGenerateSubmoduleConfigurations: false,
+    //       extensions: [[$class: 'LocalBranch', localBranch: '**']], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'github-user-and-token', url: 'https://github.com/soundarapandian/ex-java-jervis-build.git']]])
+    //   }
+    // }
     stage('Trigger aLine') {
         steps {
           script {
-            sh 'ls -a'
-            println env.WORKSPACE
-            def raw_yaml = (new File("jervis.yml")).text
-            def yaml = new Yaml()
-            def jervis_yaml = yaml.load(raw_yaml)
-            println '============================'
-            println jervis_yaml['language']
-            println jervis_yaml.dump()
+            // sh 'ls -a'
+            // println env.WORKSPACE
+            // def raw_yaml = (new File(".jervis.yml")).text
+            // def yaml = new Yaml()
+            // def jervis_yaml = yaml.load(raw_yaml)
+
+            // sh "ls -a ${env.WORKSPACE}"
+            // def build_gradle = readFile("${env.WORKSPACE}/build.gradle")
+            // def raw_yaml = readFile("${env.WORKSPACE}/.jervis.yml")
+            // def yaml = new Yaml()
+            // def jervis_yaml = yaml.load(raw_yaml)
+
+            // println '============================'
+            // println jervis_yaml['language']
+            // println jervis_yaml.dump()
+
+            List jervis_metadata = getJervisMetaData("soundarapandian/ex-java-jervis-build".toString(), env.BRANCH_NAME)
+            println jervis_metadata[0]
           }
         }
     }
